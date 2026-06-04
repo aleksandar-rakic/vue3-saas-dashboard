@@ -23,7 +23,7 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: TypeScript type check
-        run: npx vue-tsc --noEmit
+        run: npx vue-tsc --noEmit -p tsconfig.app.json
 
       - name: Prettier format check
         run: npx prettier --check "src/**/*.{ts,vue}"
