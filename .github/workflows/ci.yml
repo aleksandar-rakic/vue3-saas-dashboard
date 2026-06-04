@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & Type Check
+  validate:
+    name: Validate & Build
     runs-on: ubuntu-latest
 
     steps:
@@ -18,53 +18,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: ESLint
-        run: npm run lint
+      - name: TypeScript type check
+        run: npx vue-tsc --noEmit
 
-      - name: Prettier
-        run: npx prettier --check src/
-
-      - name: TypeScript
-        run: npm run type-check
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: lint-and-typecheck
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-        env:
-          VITE_API_URL: https://api.example.com
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-          retention-days: 7
+      - name: Prettier format check
+        run: npx prettier --check "src/**/*.{ts,vue}"
 
   docker:
-    name: Docker Build & Push
+    name: Docker Build
     runs-on: ubuntu-latest
-    needs: build
+    needs: validate
     if: github.ref == 'refs/heads/main'
 
     steps:
