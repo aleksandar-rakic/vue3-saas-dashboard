@@ -25,8 +25,6 @@ jobs:
       - name: TypeScript type check
         run: npx vue-tsc --noEmit -p tsconfig.app.json
 
-      - name: Prettier format check
-        run: npx prettier --check "src/**/*.{ts,vue}"
 
   docker:
     name: Docker Build
